@@ -6,15 +6,15 @@
 
 void InputOutputUtils::initializeInputElements() {
 
-	logger.debug("InputOutputUtils - initializeInputElements (50segs aprox.)\n");
+	logger.debug("IOUtils::initInputElmnts (50segs aprox.)\n");
 
-	//myowareSensorController1 = MyoControl(CONTROL_INPUT_MYOWARE_SENSOR_1);
-	//myowareSensorController2 = MyoControl(CONTROL_INPUT_MYOWARE_SENSOR_2);
+	myowareSensorController1 = MyoControl(CONTROL_INPUT_MYOWARE_SENSOR_1);
+	myowareSensorController2 = MyoControl(CONTROL_INPUT_MYOWARE_SENSOR_2);
   
-	//logger.info("InputOutputUtils - initializeInputElements - Calibrate myoware Sensor 1\n");
-	//myowareSensorController1.calibration();
-	//logger.info("InputOutputUtils - initializeInputElements - Calibrate myoware Sensor 2\n");
-	//myowareSensorController2.calibration();
+	logger.info("--Calibrate myoware Sensor 1\n");
+	myowareSensorController1.calibration();
+	logger.info("--Calibrate myoware Sensor 2\n");
+	myowareSensorController2.calibration();
 	
 	test.testInitializeLedStripe();
 
@@ -22,12 +22,10 @@ void InputOutputUtils::initializeInputElements() {
 
 void InputOutputUtils::resetInputElements() {
 
-	logger.debug("InputOutputUtils - resetInputElements\n");
+	logger.debug("IOUtils::resetInputElmnts\n");
 
 	myowareSensorController1.calibration();
 	myowareSensorController2.calibration();
-
- 
 
 }
 
@@ -38,7 +36,7 @@ void InputOutputUtils::resetInputElements() {
 void InputOutputUtils::initializeOutputElements() {
 
 
-	logger.info("InputOutputUtils - initializeOutputElements\n");
+	logger.info("IOUtils::initOutputElmnts\n");
 
 	// Initialize motors pinout
 	pinMode(MUX_A, OUTPUT);
@@ -53,7 +51,7 @@ void InputOutputUtils::initializeOutputElements() {
 	pinMode(PIN_OUTPUT_MOTOR_THUMB_PWM, OUTPUT);
 	pinMode(PIN_OUTPUT_MOTOR_THUMB, OUTPUT);
   
-	logger.info("InputOutputUtils - initializeOutputElements - Initialize mitten\n");
+	logger.info("--Init mitten\n");
 	initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
 	delay(1000);
 
@@ -64,12 +62,16 @@ void InputOutputUtils::initializeOutputElements() {
 	//logger.info("InputOutputUtils - initializeOutputElements - Open thumb\n");
 	//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
 	//delay(1000);
+	
+	//test.testOutputWithLedStripe(0,0,0);
+	//delay(2000);
+	//test.testOutputWithLedStripe(0,255,0);
 
 }
 
 void InputOutputUtils::resetOutputElements() {
 
-	logger.debug("InputOutputUtils - resetOutputElements\n");
+	logger.debug("IOUtils::resetOutputElmnts\n");
 
 	initializeOutputElements();
 
@@ -82,12 +84,12 @@ void InputOutputUtils::resetOutputElements() {
 
 int InputOutputUtils::getMittenPosition() {
 
-	// TODO: What happens if finger position is diferent to current position?
+	//TODO: What happens if finger position is diferent to current position?
 	// Tenedremos que revisar en qu� posicion se encuentar el dedo realmente para
 	// restaurar la posicion si es necesario.
 	int mittenPosition = currentState.getMittenPosition();
 
-	logger.info("InputOutputUtils - getMittenPosition - Mitten position: %i\n", mittenPosition);
+	logger.info("IOUtils::getMittenPos--Pos: %i\n", mittenPosition);
 
 	return mittenPosition;
 
@@ -96,23 +98,23 @@ int InputOutputUtils::getMittenPosition() {
 int InputOutputUtils::getForefingerPosition() {
 
 	// TODO: What happens if finger position is diferent to current position?
-	// Tenedremos que revisar en qu� posicion se encuentar el dedo realmente para
+	// Tenedremos que revisar en qué posicion se encuentar el dedo realmente para 
 	// restaurar la posicion si es necesario.
 	int forefingerPosition = currentState.getForefingerPosition();
 
-	logger.debug("InputOutputUtils - getForefingerPosition - Forefinger position: %i\n", forefingerPosition);
+	logger.debug("IOUtils::getForefingerPos--Pos: %i\n", forefingerPosition);
 
 	return forefingerPosition;
 }
 
 int InputOutputUtils::getThumbPosition() {
 
-	// TODO: What happens if finger position is diferent to current position?
-	// Tenedremos que revisar en qu� posicion se encuentar el dedo realmente para
+	//TODO: What happens if finger position is diferent to current position?
+	// Tenedremos que revisar en qué posicion se encuentar el dedo realmente para 
 	// restaurar la posicion si es necesario.
 	int thumbPosition = currentState.getThumbPosition();
 
-	logger.debug("getThumbPosition - Thumb position: %i\n", thumbPosition);
+	logger.debug("IOUtils::getThumbPos--Pos: %i\n", thumbPosition);
 
 	return thumbPosition;
 
@@ -124,16 +126,14 @@ int InputOutputUtils::getThumbPosition() {
 
 int InputOutputUtils::getTransitionToPerform(State state) {
 
-	logger.debug("InputOutputUtils - getTransitionToPerform\n");
+	logger.debug("IOUtils::getTransToPerform\n");
 
 	currentState = state;
 
-	/*
-	// Prueba para los senores Myoware estado ACTIVO/INACTIVO
 	boolean activation1 = myowareSensorController1.activation();
-	logger.info("InputOutputUtils - myowareSensorController1 - activation: %d\n", activation1);
+	logger.info("--myowareSensorContr1 - activation: %d\n", activation1);
 	boolean activation2 = myowareSensorController2.activation();
-	logger.info("InputOutputUtils - myowareSensorController2 - activation: %d\n", activation2);
+	logger.info("--myowareSensorContr2 - activation: %d\n", activation2);
 
 	int transitionTo = 0;
 	if(activation1 || activation2){
@@ -142,8 +142,8 @@ int InputOutputUtils::getTransitionToPerform(State state) {
 		transitionTo = STATE_IDLE;
 	}
 
-
-	// Pruba sensores Myoware todos los estados
+	/*
+	// Misma prueba un poco mas evolucionada
 	int transitionTo = 0;
 	if (!activation1 && !activation2){
 		logger.info("InputOutputUtils - IDLE\n");
@@ -160,17 +160,13 @@ int InputOutputUtils::getTransitionToPerform(State state) {
 	}
 	*/
 	
-	// TODELETE: Funcionalidad que permite hacer tests con el motor
-	// sin depender de los sensores
-
+	/*
+  	// TODELETE: Funcionalidad que permite hacer tests con el motor
+  	// sin depender de los sensores
+	static int i = 0;
 	int transitionTo = 0;
-
-	// Secuencial
-	//static int i = 0;
-	//transitionTo = ((i++)%STATES_NUMBER);
-
-	// Menu
-	transitionTo = test.testInputForTransition();
+	transitionTo = ((i++)%STATES_NUMBER);
+	*/
 
 	return transitionTo;
 	
@@ -179,51 +175,62 @@ int InputOutputUtils::getTransitionToPerform(State state) {
 
 void InputOutputUtils::openMitten() {
 
-	logger.debug("InputOutputUtils - openMitten\n");
+	logger.debug("IOUtils::openMitten\n");
 
-    if(getMittenPosition() == CLOSE){
-		  logger.info("InputOutputUtils - openMitten - OPEN\n");
-		  fingerControl(MITTEN, OPEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
-	  }
+    // TODO - Mucho cuidado!!! Estoy hay que recuperarlo
+    //if(getMittenPosition() == CLOSE){
+		logger.info("--OPEN\n");
+		test.testOutputWithLedStripe(0,0,255,0);
+		test.testOutputWithLedStripe(1,0,255,0);
+		test.testOutputWithLedStripe(2,0,255,0);
+		fingerControl(MITTEN, OPEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
+	//}
 
 }
 
 void InputOutputUtils::closeMitten() {
 
-	logger.debug("InputOutputUtils - closeMitten\n");
+	logger.debug("IOUtils::closeMitten\n");
 
-	if(getMittenPosition() == OPEN){
-		logger.info("InputOutputUtils - closeMitten - CLOSE\n");
+	// TODO - Mucho cuidado!!! Estoy hay que recuperarlo
+	//if(getMittenPosition() == OPEN){
+		logger.info("--CLOSE\n");
+		test.testOutputWithLedStripe(0,255,0,0);
+		test.testOutputWithLedStripe(1,255,0,0);
+		test.testOutputWithLedStripe(2,255,0,0);
 		fingerControl(MITTEN, CLOSE, CONTROL_INPUT_POTENTIOMETER_MITTEN);
-	}
+	//}
 }
 
 void InputOutputUtils::openForefinger() {
 
-	logger.debug("InputOutputUtils - openForefinger\n");
+	logger.debug("IOUtils::openForefinger\n");
 
 	if(getForefingerPosition() == CLOSE){
-		logger.debug("InputOutputUtils - openForefinger - OPEN\n");
+		logger.debug("--OPEN\n");
+		test.testOutputWithLedStripe(3,0,255,0);
 		//fingerControl(FOREFINGER, OPEN, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);	
 	}
 }
 
 void InputOutputUtils::closeForefinger() {
 
-	logger.debug("InputOutputUtils - closeForefinger\n");
+	logger.debug("IOUtils::closeForefinger\n");
 
 	if(getForefingerPosition() == OPEN){
-		logger.debug("InputOutputUtils - closeForefinger - CLOSE\n");
+		logger.debug("--CLOSE\n");
+		test.testOutputWithLedStripe(3,255,0,0);
 		//fingerControl(FOREFINGER, CLOSE,CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
 	}
 }
 
 void InputOutputUtils::openThumb() {
 
-	logger.debug("InputOutputUtils - openThumb\n");
+	logger.debug("IOUtils::openThumb\n");
 
 	if(getThumbPosition() == CLOSE){
-		logger.debug("InputOutputUtils - openThumb - OPEN\n");
+		logger.debug("--OPEN\n");
+		test.testOutputWithLedStripe(4,0,255,0);
 		//fingerControl(THUMB, OPEN, CONTROL_INPUT_POTENTIOMETER_THUMB);
 	}
 
@@ -231,10 +238,11 @@ void InputOutputUtils::openThumb() {
 
 void InputOutputUtils::closeThumb() {
 
-	logger.debug("InputOutputUtils - closeThumb\n");
+	logger.debug("IOUtils::closeThumb\n");
 
 	if(getThumbPosition() == CLOSE){
-		logger.debug("InputOutputUtils - closeThumb - CLOSE\n");
+		logger.debug("--CLOSE\n");
+		test.testOutputWithLedStripe(4,255,0,0);
 		//fingerControl(THUMB,CLOSE,CONTROL_INPUT_POTENTIOMETER_THUMB);
 	}
 
@@ -248,11 +256,11 @@ void InputOutputUtils::closeThumb() {
 
 void InputOutputUtils::initialFingerControl(int motorId,  int controlId){
 
-	logger.info("InputOutputUtils - fingerControl\n");
+	logger.info("IOUtils::fingerControl\n");
 
 	int initialPosition = multiplexorRead(controlId);
 	int finalPosition = initialPosition;
-	logger.info("InputOutputUtils - fingerControl - Initial position: %d\n", initialPosition);
+	logger.info("--Initial pos: %d\n", initialPosition);
 
 	if(finalPosition < 200){
 		while(finalPosition < 200){
@@ -261,9 +269,10 @@ void InputOutputUtils::initialFingerControl(int motorId,  int controlId){
 			finalPosition = multiplexorRead(controlId);
 		}
 		motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
-   
-	}else if(finalPosition > 500){
-		while(finalPosition > 200){
+	}
+
+	if(finalPosition > 800){
+		while(finalPosition > 800){
 			motorControl(motorId, CLOSE, 100);
 			delay(100);
 			finalPosition = multiplexorRead(controlId);
@@ -271,55 +280,55 @@ void InputOutputUtils::initialFingerControl(int motorId,  int controlId){
 		motorControl(motorId, CLOSE, MOTOR_SPEED_MIN);
 	}
 
-	logger.info("InputOutputUtils - fingerControl - finalPosition: %d\n", finalPosition);
+	logger.info("--finalPos: %d\n", finalPosition);
 
 }
 
 
 void InputOutputUtils::fingerControl(int motorId, int motorDir, int controlId){
 
-	logger.info("InputOutputUtils - fingerControl\n");
+  logger.info("IOUtils::fingerControl\n");
 
-	int initialPosition = multiplexorRead(controlId);
-	int finalPosition = initialPosition;
-	logger.info("InputOutputUtils - fingerControl - Initial position: %d\n", initialPosition);
+  int initialPosition = multiplexorRead(controlId);
+  int finalPosition = initialPosition;
+  logger.info("--Initial pos: %d\n", initialPosition);
 
-	if((finalPosition > 200) && (motorDir == OPEN)){
+  if(finalPosition > 200){
 
-		motorControl(motorId, OPEN , MOTOR_SPEED);
-		delay(1500);
-		motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
-		finalPosition = multiplexorRead(controlId);
+	  motorControl(motorId, OPEN , MOTOR_SPEED);
+	  delay(500);
+	  motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
+	  finalPosition = multiplexorRead(controlId);
 
-	}else if ((finalPosition < 800) && (motorDir == CLOSE)){
+  }else if (finalPosition < 800){
 
-		motorControl(motorId, CLOSE , MOTOR_SPEED);
-		delay(1500);
-		motorControl(motorId, CLOSE, MOTOR_SPEED_MIN);
-		finalPosition = multiplexorRead(controlId);
+	  motorControl(motorId, CLOSE , MOTOR_SPEED);
+	  delay(500);
+	  motorControl(motorId, CLOSE, MOTOR_SPEED_MIN);
+	  finalPosition = multiplexorRead(controlId);
 
-	}else{
-		logger.info("InputOutputUtils - fingerControl - Finger regulation");
-		initialFingerControl(motorId, controlId);
-    fingerControl(motorId, motorDir, controlId);
-	}
+  }else{
+	  logger.info("--Finger regulation");
+	  delay(1000);
+	  initialFingerControl(motorId, controlId);
+  }
   
-	logger.info("InputOutputUtils - fingerControl - Final position: %d\n", finalPosition);
+  logger.info("--Final pos: %d\n", finalPosition);
       
-	/*
+  /*
 	motorControl(motorId, motorDir, MOTOR_SPEED); 
 	// Manual Stop
 	if(motorDir){
-    	multiplexorRead(controlId);
-    	delay(1000);
+    multiplexorRead(controlId);
+    delay(1000);
 		//while(multiplexorRead(controlId) > 200);
-  	  }else{
-    	multiplexorRead(controlId);
-    	delay(1000);
+  }else{
+    multiplexorRead(controlId);
+    delay(1000);
 		//while(multiplexorRead(controlId) < 400);
 	}	
 	motorControl(motorId, motorDir, MOTOR_SPEED_MIN);
-	*/
+ */
 
 }
 
@@ -327,18 +336,18 @@ void InputOutputUtils::fingerControl(int motorId, int motorDir, int controlId){
 
 void InputOutputUtils::motorControl(int motorID, int motorDir, int motorSpeed) {
 
-   logger.info("InputOutputUtils - motorControl\n");
+   logger.info("IOUtils::motorControl\n");
 
 	// Forward Direction --> CLOSE --> 1
     // 1024 --> 0 (decrements)
 	if (motorDir) { 
-		logger.info("InputOutputUtils - motorControl - forward direction - CLOSE\n");    	
+    logger.info("--forward direction - CLOSE\n");
 		digitalWrite(MOTOR_CONTROL_MATRIX[motorID][1], LOW);
 		analogWrite(MOTOR_CONTROL_MATRIX[motorID][0], motorSpeed);
 	// Backward Direction --> OPEN --> 0
 	// 0 --> 1024 (increments)
 	} else {
-		logger.info("InputOutputUtils - motorControl - backward direction - OPEN\n");	
+    logger.info("--backward direction - OPEN\n");
 		digitalWrite(MOTOR_CONTROL_MATRIX[motorID][1], HIGH);
 		analogWrite(MOTOR_CONTROL_MATRIX[motorID][0], (MOTOR_SPEED_MAX - motorSpeed));
 	}
@@ -353,7 +362,7 @@ int InputOutputUtils::multiplexorRead(int controlId){
 	// Lecture Sensors through 74HC4051 Multiplexer
 	// Entry channel selection for 74HC4051
 	
-	logger.info("InputOutputUtils - multiplexorRead - input[%i]\n", controlId);
+	logger.info("IOUtils::multiplexorRead - input[%i]\n", controlId);
 
 	int cA = controlId & 0x01;   
 	int cB = (controlId>>1) & 0x01;     
@@ -365,7 +374,7 @@ int InputOutputUtils::multiplexorRead(int controlId){
   
 	int readedValue = analogRead(MUX_MAIN);
 
-	logger.info("InputOutputUtils - multiplexorRead - output[%i]\n", readedValue);
+	logger.info("IOUtils::multiplexorRead - output[%i]\n", readedValue);
 	
 	return readedValue;
 
