@@ -8,13 +8,13 @@ int Test::testInputForTransition(){
 
 	int transition = 0;
 	
-	logger.info("\nIntroduce un valor para el estado deseado: \n");
-	logger.info("  (0) STATE_INACTIVE\n");
-	logger.info("  (1) STATE_IDLE\n");
-	logger.info("  (2) STATE_TONGS\n");
-	logger.info("  (3) STATE_FINGER\n");
-	logger.info("  (4) STATE_CLOSE\n");
-	logger.info("  (5) STATE_FIST\n");
+	logger.info("Trans to: \n");
+	logger.info(" (0) STATE_INACTIVE\n");
+	logger.info(" (1) STATE_IDLE\n");
+	logger.info(" (2) STATE_TONGS\n");
+	logger.info(" (3) STATE_FINGER\n");
+	logger.info(" (4) STATE_CLOSE\n");
+	logger.info(" (5) STATE_FIST\n");
 
 	// send data only when you receive data:
 	while(!Serial.available());
