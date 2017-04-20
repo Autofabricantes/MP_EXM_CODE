@@ -53,17 +53,17 @@ void InputOutputUtils::initializeOutputElements() {
 	pinMode(PIN_OUTPUT_MOTOR_THUMB_PWM, OUTPUT);
 	pinMode(PIN_OUTPUT_MOTOR_THUMB, OUTPUT);
   
-	logger.info("IOUTILS::initOutput-Init mitten\n");
+	logger.info("IOUTILS::initOutput-Initialize mitten\n");
 	initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
 	delay(1000);
 
-	logger.info("IOUTILS::initOutput-Init forefinger\n");
-	initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
-	delay(1000);
+	//logger.info("IOUTILS::initOutput-Init forefinger\n");
+	//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
+	//delay(1000);
 
-	logger.info("IOUTILS::initOutput-Init thumb\n");
-	initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
-	delay(1000);
+	//logger.info("IOUTILS::initOutput-Init thumb\n");
+	//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
+	//delay(1000);
 
 }
 
@@ -87,7 +87,7 @@ int InputOutputUtils::getMittenPosition() {
 	// restaurar la posicion si es necesario.
 	int mittenPosition = currentState.getMittenPosition();
 
-	logger.info("IOUTILS::getMittenPos: %i\n", mittenPosition);
+	logger.info("IOUTILS::getMittenPosition: %i\n", mittenPosition);
 
 	return mittenPosition;
 
@@ -261,9 +261,10 @@ void InputOutputUtils::initialFingerControl(int motorId,  int controlId){
 			finalPosition = multiplexorRead(controlId);
 		}
 		motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
-   
-	}else if(finalPosition > 500){
-		while(finalPosition > 200){
+	}
+  
+  if(finalPosition > 800){
+		while(finalPosition > 800){
 			motorControl(motorId, CLOSE, 100);
 			delay(100);
 			finalPosition = multiplexorRead(controlId);
@@ -284,22 +285,23 @@ void InputOutputUtils::fingerControl(int motorId, int motorDir, int controlId){
 	int finalPosition = initialPosition;
 	logger.info("IOUTILS::fingerControl-Initial pos: %d\n", initialPosition);
 
-	if((finalPosition > 200) && (motorDir == OPEN)){
+	if(finalPosition > 200){
 
 		motorControl(motorId, OPEN , MOTOR_SPEED);
-		delay(1500);
+		delay(500);
 		motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
 		finalPosition = multiplexorRead(controlId);
 
-	}else if ((finalPosition < 800) && (motorDir == CLOSE)){
+	}else if (finalPosition < 800){
 
 		motorControl(motorId, CLOSE , MOTOR_SPEED);
-		delay(1500);
+		delay(500);
 		motorControl(motorId, CLOSE, MOTOR_SPEED_MIN);
 		finalPosition = multiplexorRead(controlId);
 
 	}else{
 		initialFingerControl(motorId, controlId);
+    logger.info("IOUTILS::fingerControl-Execute again finger control");
     fingerControl(motorId, motorDir, controlId);
 	}
   
