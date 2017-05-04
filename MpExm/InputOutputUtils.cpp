@@ -6,13 +6,14 @@
 
 void InputOutputUtils::initializeInputElements() {
 
-	logger.debug("IOUTILS::initInput"); 	
+	logger.debug("IOUTILS::initInput\n");
 }
 
 void InputOutputUtils::resetInputElements() {
 
 	logger.debug("IOUTILS::resetInput\n");
 
+	// TOREMEMBER
 	//myowareSensorController1.calibration();
 	//myowareSensorController2.calibration();
 
@@ -40,19 +41,6 @@ void InputOutputUtils::initializeOutputElements() {
 	pinMode(PIN_OUTPUT_MOTOR_THUMB_PWM, OUTPUT);
 	pinMode(PIN_OUTPUT_MOTOR_THUMB, OUTPUT);
   
-	// TOINCLUDEAGAIN
-	//logger.info("IOUTILS::initOutput-Initialize mitten\n");
-	//initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
-	//delay(1000);
-
-	//logger.info("IOUTILS::initOutput-Init forefinger\n");
-	//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
-	//delay(1000);
-
-	//logger.info("IOUTILS::initOutput-Init thumb\n");
-	//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
-	//delay(1000);
-
 }
 
 void InputOutputUtils::resetOutputElements() {
@@ -116,40 +104,11 @@ int InputOutputUtils::getTransitionToPerform(State state) {
 
 	currentState = state;
 
-	/*
-	// Prueba para los senores Myoware estado ACTIVO/INACTIVO
-	boolean activation1 = myowareSensorController1.activation();
-	logger.info("IOUTILS::myowareSensorController1 - activation: %d\n", activation1);
-	boolean activation2 = myowareSensorController2.activation();
-	logger.info("IOUTILS::myowareSensorController2 - activation: %d\n", activation2);
-
-	int transitionTo = 0;
-	if(activation1 || activation2){
-		transitionTo = STATE_FIST;
-	}else{
-		transitionTo = STATE_IDLE;
-	}
-
-
-	// Pruba sensores Myoware todos los estados
-	int transitionTo = 0;
-	if (!activation1 && !activation2){
-		logger.info("IOUTILS::IDLE\n");
-		transitionTo = STATE_IDLE;
-	}else if (!activation1 && activation2) {
-		logger.info("IOUTILS::FINGERS\n");
-		transitionTo = STATE_FINGER;
-	} else if (activation1 && !activation2) {
-		logger.info("IOUTILS::TONGS\n");
-		transitionTo = STATE_TONGS;
-	} else {
-		logger.info("IOUTILS::FIST\n");
-		transitionTo = STATE_FIST;
-	}
-	*/
-	
-	// TODELETE: Funcionalidad que permite hacer tests con el motor
-	// sin depender de los sensores
+	// TOREMEMBER
+	//boolean activation1 = myowareSensorController1.activation();
+	//logger.info("IOUTILS::myowareSensorController1 - activation: %d\n", activation1);
+	//boolean activation2 = myowareSensorController2.activation();
+	//logger.info("IOUTILS::myowareSensorController2 - activation: %d\n", activation2);
 
 	int transitionTo = 0;
 
@@ -267,7 +226,6 @@ void InputOutputUtils::initialFingerControlTime(int motorId,  int controlId){
 
 }
 
-// TODO - No es necesaria
 void InputOutputUtils::initialFingerControlPID(int motorId,  int controlId){
 
 	logger.info("IOUTILS::initialFingerControlPID\n");
@@ -283,33 +241,20 @@ void InputOutputUtils::initialFingerControlPID(int motorId,  int controlId){
 	setpoint = 0;
 	logger.info("IOUTILS::initialFingerControlPID - initialization setpoint: %f\n", setpoint);
 
-	// Initialize PID
-	/*
-	if(input < 200){
-		pid = PID(&input, &output, &setpoint, kp, ki, kd, DIRECT);
-		motorDir = OPEN;
-	}else{
-		pid = PID(&input, &output, &setpoint, kp, ki, kd, REVERSE);
-		motorDir = CLOSE;
-	}*/
-
 	if(input > 0){
 		pid = PID(&input, &output, &setpoint, PID_KP, PID_KI, PID_KD, REVERSE);
 		motorDir = OPEN;
 	}
 
-	//Sets the sample rate
-	pid.SetSampleTime(PID_LOOP_TIME);
 	//Turn on the PID loop
 	pid.SetMode(AUTOMATIC);
 	pid.SetOutputLimits(0,MOTOR_SPEED);
 
-	while(input > 0){
+	while(abs(input - setpoint) > 10){
 
 		input = map(multiplexorRead(controlId), 0, 1024, MOTOR_SPEED_MIN, MOTOR_SPEED);
 		//input = multiplexorRead(controlId);
 
-		delay(300);
 		pid.Compute();
 
 		motorControl(motorId, motorDir, round(output));
@@ -321,11 +266,8 @@ void InputOutputUtils::initialFingerControlPID(int motorId,  int controlId){
 
 	}
 
-  logger.info("IOUTILS::initialFingerControlPID - Stop motor \n");
+	logger.info("IOUTILS::initialFingerControlPID - Stop motor \n");
 	motorControl(motorId, motorDir, MOTOR_SPEED_MIN);
-
-	//Turn off the PID loop
-	pid.SetMode(MANUAL);
 
 }
 
@@ -402,8 +344,6 @@ void InputOutputUtils::fingerControlPID(int motorId, int motorDir, int controlId
     	PID pid = PID(&input, &output, &setpoint, PID_KP, PID_KI, PID_KD, DIRECT);
     }
 
-	  //Sets the sample rate
-    pid.SetSampleTime(PID_LOOP_TIME);
     //Turn on the PID loop
     pid.SetMode(AUTOMATIC);
     pid.SetOutputLimits(0, MOTOR_SPEED);
@@ -416,9 +356,7 @@ void InputOutputUtils::fingerControlPID(int motorId, int motorDir, int controlId
     	logger.info("IOUTILS::fingerControlPID - input: %f\n", input);
 
     	pid.Compute();
-
-    	delay(100);
-
+      
     	motorControl(motorId, motorDir, round(output));
 
     	logger.info("IOUTILS::fingerControlPID - output: %f\n", output);
@@ -428,9 +366,6 @@ void InputOutputUtils::fingerControlPID(int motorId, int motorDir, int controlId
     logger.info("IOUTILS::fingerControlPID - Stopping motor\n");
     motorControl(motorId, motorDir, MOTOR_SPEED_MIN);
 
-    //Turn off the PID loop
-    pid.SetMode(MANUAL);
-
 }
 
 
@@ -439,7 +374,7 @@ void InputOutputUtils::motorControl(int motorID, int motorDir, int motorSpeed) {
    logger.info("IOUTILS::motorControl\n");
 
 	// Forward Direction --> CLOSE --> 1
-  // 1024 --> 0 (decrements)
+   	// 1024 --> 0 (decrements)
 	if (motorDir) { 
 		logger.info("IOUTILS::motorControl-forward direction-CLOSE\n");
 		digitalWrite(MOTOR_CONTROL_MATRIX[motorID][1], LOW);
@@ -449,7 +384,6 @@ void InputOutputUtils::motorControl(int motorID, int motorDir, int motorSpeed) {
 	} else {
 		logger.info("IOUTILS::motorControl-backward direction-OPEN\n");
 		digitalWrite(MOTOR_CONTROL_MATRIX[motorID][1], HIGH);
-		// TODO - Tengo que modificar esto si quiero cambiar el speed
 		analogWrite(MOTOR_CONTROL_MATRIX[motorID][0], (MOTOR_SPEED_MAX - motorSpeed));
 	}
   

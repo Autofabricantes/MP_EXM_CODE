@@ -20,6 +20,8 @@ int Transition::getTransitionToPerform(State state){
 
 	logger.debug("TRANS::getTrans2Perform\n");
 
+	currentState = state;
+
 	return inputOutputUtils.getTransitionToPerform(state);
 }
 
@@ -27,32 +29,33 @@ void Transition::transitionToInactive(){
 
 	logger.debug("TRANS::trans2Inactive\n");
 
-	//openMitten();
-	//openForefinger();
-	//openThumb();
-
-	// TODELETE - TO AVOID LOOPS IN TESTS
-	logger.info("IOUTILS::initOutput-Initialize mitten\n");
-	inputOutputUtils.initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
-	delay(1000);
-
-	//logger.info("IOUTILS::initOutput-Init forefinger\n");
-	//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
-	//delay(1000);
-
-	//logger.info("IOUTILS::initOutput-Init thumb\n");
-	//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
-	//delay(1000);
-
+	openMitten();
+	openForefinger();
+	openThumb();
 }
 
 void Transition::transitionToIdle(){
 
 	logger.debug("TRANS::trans2Idle\n");
 
-	openMitten();
-	openForefinger();
-	openThumb();
+	if(currentState.getCurrentState() == STATE_INACTIVE){
+
+		logger.info("IOUTILS::initOutput-Initialize mitten\n");
+		inputOutputUtils.initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
+
+		//logger.info("IOUTILS::initOutput-Init forefinger\n");
+		//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
+
+		//logger.info("IOUTILS::initOutput-Init thumb\n");
+		//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
+
+	}else{
+
+		openMitten();
+		openForefinger();
+		openThumb();
+
+	}
 }
 
 void Transition::transitionToTongs(){
