@@ -1,4 +1,5 @@
 #include <Arduino.h>
+
 #include "Logging.h"
 
 #ifndef CONSTANTS_H
@@ -163,6 +164,20 @@ const int MOTOR_CONTROL_MATRIX[FINGERS][2] =
 #define CONTROL_INPUT_POTENTIOMETER_THUMB       6
 // CS_2
 #define CONTROL_INPUT_CURRENT_SENSOR_THUMB      7
+
+
+// PID FUNCTION
+
+// Tuning PID parameters
+//Initial Proportional Gain
+#define PID_KP 1
+//Initial Integral Gain
+#define PID_KI 1
+//Initial Differential Gain
+#define PID_KD 1
+
+// Variable that determines how fast our PID loop runs
+#define PID_LOOP_TIME 300
 
 
 #endif

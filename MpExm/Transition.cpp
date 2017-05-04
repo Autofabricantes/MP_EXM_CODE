@@ -27,9 +27,23 @@ void Transition::transitionToInactive(){
 
 	logger.debug("TRANS::trans2Inactive\n");
 
-	openMitten();
-	openForefinger();
-	openThumb();
+	//openMitten();
+	//openForefinger();
+	//openThumb();
+
+	// TODELETE - TO AVOID LOOPS IN TESTS
+	logger.info("IOUTILS::initOutput-Initialize mitten\n");
+	inputOutputUtils.initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
+	delay(1000);
+
+	//logger.info("IOUTILS::initOutput-Init forefinger\n");
+	//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
+	//delay(1000);
+
+	//logger.info("IOUTILS::initOutput-Init thumb\n");
+	//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
+	//delay(1000);
+
 }
 
 void Transition::transitionToIdle(){

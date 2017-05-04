@@ -1,6 +1,8 @@
 #ifndef INPUT_OUTPUT_UTILS_H
 #define INPUT_OUTPUT_UTILS_H
 
+#include <PID_v1.h>
+
 #include "Constants.h"
 #include "MyoControl.h"
 #include "State.h"
@@ -14,8 +16,8 @@ class InputOutputUtils{
 	Test test;
 
 	// INPUT - Myoware Sensor Controllers
-	MyoControl myowareSensorController1;
-	MyoControl myowareSensorController2;
+	//MyoControl myowareSensorController1;
+	//MyoControl myowareSensorController2;
 
 	// State to retrieve current finger's position
     State currentState;
@@ -27,14 +29,21 @@ class InputOutputUtils{
     int multiplexorRead(int controlId);
 	
 	// Finger control methods
-    void initialFingerControl(int motorId, int controlId);
 	void fingerControl(int motorId, int motorDir, int controlId);
+
+	void initialFingerControlTime(int motorId, int controlId);
+	void fingerControlTime(int motorId, int motorDir, int controlId);
+	void initialFingerControlPID(int motorId, int controlId);
+	void fingerControlPID(int motorId, int motorDir, int controlId);
 
   public:
 
     /*************************************************************************/
     /* INPUT METHODS                                                         */
     /*************************************************************************/
+
+	// TODO - TAKE BACK TO PRIVATE
+    void initialFingerControl(int motorId, int controlId);
 
     // Initialization of INPUT sensors
     void initializeInputElements();

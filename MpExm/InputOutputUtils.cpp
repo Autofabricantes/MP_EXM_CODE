@@ -6,18 +6,7 @@
 
 void InputOutputUtils::initializeInputElements() {
 
-	logger.debug("IOUTILS::initInput");
-
-	//logger.debug("IOUTILS::initInput (50segs aprox.)\n");
-
-	//myowareSensorController1 = MyoControl(CONTROL_INPUT_MYOWARE_SENSOR_1);
-	//myowareSensorController2 = MyoControl(CONTROL_INPUT_MYOWARE_SENSOR_2);
-  
-	//logger.info("IOUTILS::initializeInputElements - Calibrate myoware Sensor 1\n");
-	//myowareSensorController1.calibration();
-	//logger.info("IOUTILS::initializeInputElements - Calibrate myoware Sensor 2\n");
-	//myowareSensorController2.calibration();
-	
+	logger.debug("IOUTILS::initInput"); 	
 }
 
 void InputOutputUtils::resetInputElements() {
@@ -26,8 +15,6 @@ void InputOutputUtils::resetInputElements() {
 
 	//myowareSensorController1.calibration();
 	//myowareSensorController2.calibration();
-
- 
 
 }
 
@@ -53,9 +40,10 @@ void InputOutputUtils::initializeOutputElements() {
 	pinMode(PIN_OUTPUT_MOTOR_THUMB_PWM, OUTPUT);
 	pinMode(PIN_OUTPUT_MOTOR_THUMB, OUTPUT);
   
-	logger.info("IOUTILS::initOutput-Initialize mitten\n");
-	initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
-	delay(1000);
+	// TOINCLUDEAGAIN
+	//logger.info("IOUTILS::initOutput-Initialize mitten\n");
+	//initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
+	//delay(1000);
 
 	//logger.info("IOUTILS::initOutput-Init forefinger\n");
 	//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
@@ -203,8 +191,8 @@ void InputOutputUtils::openForefinger() {
 	logger.debug("IOUTILS::openForefinger\n");
 
 	if(getForefingerPosition() == CLOSE){
-		logger.debug("IOUTILS::openForefinger-OPEN\n");
-		fingerControl(FOREFINGER, OPEN, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
+		logger.info("IOUTILS::openForefinger-OPEN\n");
+		//fingerControl(FOREFINGER, OPEN, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
 	}
 }
 
@@ -213,29 +201,29 @@ void InputOutputUtils::closeForefinger() {
 	logger.debug("IOUTILS::closeForefinger\n");
 
 	if(getForefingerPosition() == OPEN){
-		logger.debug("IOUTILS::closeForefinger-CLOSE\n");
-		fingerControl(FOREFINGER, CLOSE,CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
+		logger.info("IOUTILS::closeForefinger-CLOSE\n");
+		//fingerControl(FOREFINGER, CLOSE,CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
 	}
 }
 
 void InputOutputUtils::openThumb() {
 
-	logger.debug("IOUTILS::openThumb\n");
+	logger.info("IOUTILS::openThumb\n");
 
 	if(getThumbPosition() == CLOSE){
-		logger.debug("IOUTILS::openThumb-OPEN\n");
-		fingerControl(THUMB, OPEN, CONTROL_INPUT_POTENTIOMETER_THUMB);
+		logger.info("IOUTILS::openThumb-OPEN\n");
+		//fingerControl(THUMB, OPEN, CONTROL_INPUT_POTENTIOMETER_THUMB);
 	}
 
 }
 
 void InputOutputUtils::closeThumb() {
 
-	logger.debug("IOUTILS::closeThumb\n");
+	logger.info("IOUTILS::closeThumb\n");
 
 	if(getThumbPosition() == CLOSE){
-		logger.debug("IOUTILS::closeThumb-CLOSE\n");
-		fingerControl(THUMB,CLOSE,CONTROL_INPUT_POTENTIOMETER_THUMB);
+		logger.info("IOUTILS::closeThumb-CLOSE\n");
+		//fingerControl(THUMB,CLOSE,CONTROL_INPUT_POTENTIOMETER_THUMB);
 	}
 
 }
@@ -245,34 +233,99 @@ void InputOutputUtils::closeThumb() {
 /* PCB CONTROLS                                                               */
 /******************************************************************************/
 
-
 void InputOutputUtils::initialFingerControl(int motorId,  int controlId){
 
-	logger.info("IOUTILS::fingerControl\n");
+	//initialFingerControlTime(motorId, controlId);
+	initialFingerControlPID(motorId, controlId);
+}
+
+void InputOutputUtils::initialFingerControlTime(int motorId,  int controlId){
+
+	logger.info("IOUTILS::initialFingerControlTime\n");
 
 	int initialPosition = multiplexorRead(controlId);
 	int finalPosition = initialPosition;
-	logger.info("IOUTILS::fingerControl-Initial pos: %d\n", initialPosition);
+	logger.info("IOUTILS::initialFingerControlTime-initialPos: %d\n", initialPosition);
 
 	if(finalPosition < 200){
 		while(finalPosition < 200){
-			motorControl(motorId, OPEN, 100);
-			delay(100);
-			finalPosition = multiplexorRead(controlId);
-		}
-		motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
-	}
-  
-  if(finalPosition > 800){
-		while(finalPosition > 800){
 			motorControl(motorId, CLOSE, 100);
 			delay(100);
 			finalPosition = multiplexorRead(controlId);
 		}
-		motorControl(motorId, CLOSE, MOTOR_SPEED_MIN);
 	}
 
-	logger.info("IOUTILS::fingerControl-finalPos: %d\n", finalPosition);
+	if(finalPosition > 800){
+		while(finalPosition > 800){
+			motorControl(motorId, OPEN, 100);
+			delay(100);
+			finalPosition = multiplexorRead(controlId);
+		}
+	}
+
+	logger.info("IOUTILS::initialFingerControlTime-finalPos: %d\n", finalPosition);
+
+}
+
+// TODO - No es necesaria
+void InputOutputUtils::initialFingerControlPID(int motorId,  int controlId){
+
+	logger.info("IOUTILS::initialFingerControlPID\n");
+
+	double setpoint, input, output;
+	PID pid;
+	int motorDir;
+
+	input = map(multiplexorRead(controlId), 0, 1024, MOTOR_SPEED_MIN, MOTOR_SPEED);
+	//input = multiplexorRead(controlId);
+	logger.info("IOUTILS::initialFingerControlPID - input: %f\n", input);
+
+	setpoint = 0;
+	logger.info("IOUTILS::initialFingerControlPID - initialization setpoint: %f\n", setpoint);
+
+	// Initialize PID
+	/*
+	if(input < 200){
+		pid = PID(&input, &output, &setpoint, kp, ki, kd, DIRECT);
+		motorDir = OPEN;
+	}else{
+		pid = PID(&input, &output, &setpoint, kp, ki, kd, REVERSE);
+		motorDir = CLOSE;
+	}*/
+
+	if(input > 0){
+		pid = PID(&input, &output, &setpoint, PID_KP, PID_KI, PID_KD, REVERSE);
+		motorDir = OPEN;
+	}
+
+	//Sets the sample rate
+	pid.SetSampleTime(PID_LOOP_TIME);
+	//Turn on the PID loop
+	pid.SetMode(AUTOMATIC);
+	pid.SetOutputLimits(0,MOTOR_SPEED);
+
+	while(input > 0){
+
+		input = map(multiplexorRead(controlId), 0, 1024, MOTOR_SPEED_MIN, MOTOR_SPEED);
+		//input = multiplexorRead(controlId);
+
+		delay(300);
+		pid.Compute();
+
+		motorControl(motorId, motorDir, round(output));
+
+		input = map(multiplexorRead(controlId), 0, 1024, MOTOR_SPEED_MIN, MOTOR_SPEED);
+		//input = multiplexorRead(controlId);
+		logger.info("IOUTILS::initialFingerControlPID - loop input: %f\n", input);
+		logger.info("IOUTILS::initialFingerControlPID - loop output: %f\n", output);
+
+	}
+
+  logger.info("IOUTILS::initialFingerControlPID - Stop motor \n");
+	motorControl(motorId, motorDir, MOTOR_SPEED_MIN);
+
+	//Turn off the PID loop
+	pid.SetMode(MANUAL);
 
 }
 
@@ -281,34 +334,104 @@ void InputOutputUtils::fingerControl(int motorId, int motorDir, int controlId){
 
 	logger.info("IOUTILS::fingerControl\n");
 
+	//fingerControlTime(motorId, motorDir, controlId);
+	fingerControlPID(motorId, motorDir, controlId);
+
+}
+
+void InputOutputUtils::fingerControlTime(int motorId, int motorDir, int controlId){
+
+	logger.info("IOUTILS::fingerControlTime\n");
+
 	int initialPosition = multiplexorRead(controlId);
 	int finalPosition = initialPosition;
-	logger.info("IOUTILS::fingerControl-Initial pos: %d\n", initialPosition);
+	logger.info("IOUTILS::fingerControlTime-Initial pos: %d\n", initialPosition);
 
-	if(finalPosition > 200){
+	if((finalPosition < 200) || (finalPosition > 800)){
+
+		initialFingerControl(motorId, controlId);
+		logger.info("IOUTILS::fingerControlTime-Execute again finger control");
+		fingerControl(motorId, motorDir, controlId);
+
+	}else if((finalPosition) > 200 && (motorDir == OPEN)){
 
 		motorControl(motorId, OPEN , MOTOR_SPEED);
-		delay(500);
+		delay(100);
 		motorControl(motorId, OPEN, MOTOR_SPEED_MIN);
 		finalPosition = multiplexorRead(controlId);
 
-	}else if (finalPosition < 800){
-
+	}else if ((finalPosition < 800) && (motorDir == CLOSE)){
 		motorControl(motorId, CLOSE , MOTOR_SPEED);
-		delay(500);
+		delay(100);
 		motorControl(motorId, CLOSE, MOTOR_SPEED_MIN);
 		finalPosition = multiplexorRead(controlId);
 
-	}else{
-		initialFingerControl(motorId, controlId);
-    logger.info("IOUTILS::fingerControl-Execute again finger control");
-    fingerControl(motorId, motorDir, controlId);
 	}
-  
-	logger.info("IOUTILS::fingerControl-Final pos: %d\n", finalPosition);
+
+	logger.info("IOUTILS::fingerControlTime-Final pos: %d\n", finalPosition);
       
 }
 
+void InputOutputUtils::fingerControlPID(int motorId, int motorDir, int controlId){
+
+    logger.info("IOUTILS::fingerControlPID\n");
+
+    double setpoint, input, output;
+    PID pid;
+
+    input = map(multiplexorRead(controlId), 0, 1023, 0, MOTOR_SPEED);
+	//input = multiplexorRead(controlId);
+
+    logger.info("IOUTILS::fingerControlPID - input: %f\n", input);
+
+    if (motorDir == OPEN){
+
+    	setpoint = MOTOR_SPEED_MIN;
+    	logger.info("IOUTILS::fingerControlPID - OPEN - final setpoint: %f\n", setpoint);
+  
+    	// Initialize PID
+    	PID pid = PID(&input, &output, &setpoint, PID_KP, PID_KI, PID_KD, REVERSE);
+
+
+    }else if (motorDir == CLOSE){
+
+    	setpoint = MOTOR_SPEED;
+    	logger.info("IOUTILS::fingerControlPID - CLOSE  - final setpoint: %f\n", setpoint);
+  
+    	// Initialize PID
+    	PID pid = PID(&input, &output, &setpoint, PID_KP, PID_KI, PID_KD, DIRECT);
+    }
+
+	  //Sets the sample rate
+    pid.SetSampleTime(PID_LOOP_TIME);
+    //Turn on the PID loop
+    pid.SetMode(AUTOMATIC);
+    pid.SetOutputLimits(0, MOTOR_SPEED);
+
+    while(abs(input - setpoint) > 10){
+
+    	input = map(multiplexorRead(controlId), 0, 1024, 0, MOTOR_SPEED);
+    	//input = multiplexorRead(controlId);
+
+    	logger.info("IOUTILS::fingerControlPID - input: %f\n", input);
+
+    	pid.Compute();
+
+    	delay(100);
+
+    	motorControl(motorId, motorDir, round(output));
+
+    	logger.info("IOUTILS::fingerControlPID - output: %f\n", output);
+
+    }
+
+    logger.info("IOUTILS::fingerControlPID - Stopping motor\n");
+    motorControl(motorId, motorDir, MOTOR_SPEED_MIN);
+
+    //Turn off the PID loop
+    pid.SetMode(MANUAL);
+
+}
 
 
 void InputOutputUtils::motorControl(int motorID, int motorDir, int motorSpeed) {
@@ -316,7 +439,7 @@ void InputOutputUtils::motorControl(int motorID, int motorDir, int motorSpeed) {
    logger.info("IOUTILS::motorControl\n");
 
 	// Forward Direction --> CLOSE --> 1
-    // 1024 --> 0 (decrements)
+  // 1024 --> 0 (decrements)
 	if (motorDir) { 
 		logger.info("IOUTILS::motorControl-forward direction-CLOSE\n");
 		digitalWrite(MOTOR_CONTROL_MATRIX[motorID][1], LOW);
@@ -326,6 +449,7 @@ void InputOutputUtils::motorControl(int motorID, int motorDir, int motorSpeed) {
 	} else {
 		logger.info("IOUTILS::motorControl-backward direction-OPEN\n");
 		digitalWrite(MOTOR_CONTROL_MATRIX[motorID][1], HIGH);
+		// TODO - Tengo que modificar esto si quiero cambiar el speed
 		analogWrite(MOTOR_CONTROL_MATRIX[motorID][0], (MOTOR_SPEED_MAX - motorSpeed));
 	}
   

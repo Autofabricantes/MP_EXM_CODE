@@ -63,7 +63,7 @@ void Logging::verbose(char* msg, ...){
 				Serial.print(va_arg( args, int ),DEC);
 				continue;
 			}
-            if( *format == 'x' ) {
+			     if( *format == 'x' ) {
 				Serial.print(va_arg( args, int ),HEX);
 				continue;
 			}
@@ -85,6 +85,11 @@ void Logging::verbose(char* msg, ...){
 				Serial.print(va_arg( args, long ),DEC);
 				continue;
 			}
+
+       if( *format == 'f' ) {
+       Serial.print(va_arg( args, double ),DEC);
+        continue;
+      }
 
             if( *format == 'c' ) {
 				Serial.print(va_arg( args, int ));
