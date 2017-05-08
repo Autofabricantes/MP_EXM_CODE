@@ -250,7 +250,7 @@ void InputOutputUtils::initialFingerControlPID(int motorId,  int controlId){
 	pid.SetMode(AUTOMATIC);
 	pid.SetOutputLimits(0,MOTOR_SPEED);
 
-	while(abs(input - setpoint) > 10){
+	while(abs(input - setpoint) >  PID_LIMITS){
 
 		input = map(multiplexorRead(controlId), 0, 1024, MOTOR_SPEED_MIN, MOTOR_SPEED);
 		//input = multiplexorRead(controlId);
@@ -348,7 +348,7 @@ void InputOutputUtils::fingerControlPID(int motorId, int motorDir, int controlId
     pid.SetMode(AUTOMATIC);
     pid.SetOutputLimits(0, MOTOR_SPEED);
 
-    while(abs(input - setpoint) > 10){
+    while(abs(input - setpoint) >  PID_LIMITS){
 
     	input = map(multiplexorRead(controlId), 0, 1024, 0, MOTOR_SPEED);
     	//input = multiplexorRead(controlId);

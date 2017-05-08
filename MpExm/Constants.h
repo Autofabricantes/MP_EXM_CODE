@@ -177,7 +177,7 @@ const int MOTOR_CONTROL_MATRIX[FINGERS][2] =
 #define PID_KD 1
 
 // Variable that determines how fast our PID loop runs
-#define PID_LOOP_TIME 300
+#define PID_LIMITS 30
 
 
 #endif
