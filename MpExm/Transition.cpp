@@ -40,13 +40,13 @@ void Transition::transitionToIdle(){
 
 	if(currentState.getCurrentState() == STATE_INACTIVE){
 
-		logger.info("IOUTILS::initOutput-Initialize mitten\n");
+		logger.info("IOUTILS::trans2Idle-Initialize mitten\n");
 		inputOutputUtils.initialFingerControl(MITTEN, CONTROL_INPUT_POTENTIOMETER_MITTEN);
 
-		//logger.info("IOUTILS::initOutput-Init forefinger\n");
+		//logger.info("IOUTILS::trans2Idle-Init forefinger\n");
 		//initialFingerControl(FOREFINGER, CONTROL_INPUT_POTENTIOMETER_FOREFINGER);
 
-		//logger.info("IOUTILS::initOutput-Init thumb\n");
+		//logger.info("IOUTILS::trans2Idle-Init thumb\n");
 		//initialFingerControl(THUMB, CONTROL_INPUT_POTENTIOMETER_THUMB);
 
 	}else{
