@@ -12,6 +12,10 @@ class InputOutputUtils{
 
   private:
 
+	int relativePotMittenValue;
+	int relativePotForefingerValue;
+	int relativePotThumbValue;
+
 	// TODELETE - Test Class
 	Test test;
 
@@ -27,7 +31,8 @@ class InputOutputUtils{
 
     // Multiplexor lecture method
     int multiplexorRead(int controlId);
-	
+    int initializePotMultiplexorRead(int controlId);
+
 	// Finger control methods
 	void fingerControl(int motorId, int motorDir, int controlId);
 
@@ -41,6 +46,9 @@ class InputOutputUtils{
     /*************************************************************************/
     /* INPUT METHODS                                                         */
     /*************************************************************************/
+
+	void initializeRelativePotsValue();
+	int getRelativePotValue(int controlId, int currentValue);
 
 	// TODO - TAKE BACK TO PRIVATE
     void initialFingerControl(int motorId, int controlId);

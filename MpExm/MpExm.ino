@@ -7,20 +7,24 @@
 #define LOGLEVEL LOG_LEVEL_DEBUG
 
 StateMachine stateMachine;
+ 
 int counter = 0;
 
 void setup(){
   
 	logger.init(LOGLEVEL, 115200);
   
-  delay(5000);
+    delay(5000);
   
 	logger.info("\n---> Setup\n");
 
-  stateMachine.start();
+  	stateMachine.start();
 
 	inputOutputUtils.initializeInputElements();
 	inputOutputUtils.initializeOutputElements();
+	
+	delay(10000);
+	
   
 }
   

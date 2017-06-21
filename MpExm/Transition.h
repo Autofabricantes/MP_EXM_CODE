@@ -9,7 +9,7 @@ class Transition{
 
 	State currentState;
 
-    // Moves mitten to OPEN postion if necesary
+    // Moves mitten to OPEN position if necesary
     void openMitten();
 	// Moves mitten to CLOSE postion if necesary
     void closeMitten();

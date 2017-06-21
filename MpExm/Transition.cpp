@@ -6,19 +6,18 @@
 /******************************************************************************/
 
 Transition::Transition(){
-	logger.debug("TRANS::Trans\n");
+	//logger.debug("TRANS::Trans\n");
 }
 
 void Transition::reset(){
 
-	logger.debug("TRANS::reset\n");
-
+	//logger.debug("TRANS::reset\n");
 	transitionToInactive();
 }
 
 int Transition::getTransitionToPerform(State state){
 
-	logger.debug("TRANS::getTrans2Perform\n");
+	//logger.debug("TRANS::getTrans2Perform\n");
 
 	currentState = state;
 
@@ -27,7 +26,7 @@ int Transition::getTransitionToPerform(State state){
 
 void Transition::transitionToInactive(){
 
-	logger.debug("TRANS::trans2Inactive\n");
+	//logger.debug("TRANS::trans2Inactive\n");
 
 	openMitten();
 	openForefinger();
@@ -36,7 +35,7 @@ void Transition::transitionToInactive(){
 
 void Transition::transitionToIdle(){
 
-	logger.debug("TRANS::trans2Idle\n");
+	//logger.debug("TRANS::trans2Idle\n");
 
 	if(currentState.getCurrentState() == STATE_INACTIVE){
 
@@ -60,7 +59,7 @@ void Transition::transitionToIdle(){
 
 void Transition::transitionToTongs(){
 
-	logger.debug("TRANS::trans2Tongs\n");
+	//logger.debug("TRANS::trans2Tongs\n");
 
 	openMitten();
 	closeForefinger();
@@ -69,7 +68,7 @@ void Transition::transitionToTongs(){
 
 void Transition::transitionToFinger(){
 
-	logger.debug("TRANS::trans2Finger\n");
+	//logger.debug("TRANS::trans2Finger\n");
 
 	closeMitten();
 	openForefinger();
@@ -78,7 +77,7 @@ void Transition::transitionToFinger(){
 
 void Transition::transitionToClose(){
 
-	logger.debug("TRANS::trans2Close\n");
+	//logger.debug("TRANS::trans2Close\n");
 
 	closeMitten();
 	closeForefinger();
@@ -87,7 +86,7 @@ void Transition::transitionToClose(){
 
 void Transition::transitionToFist(){
 
-	logger.debug("TRANS::trans2Fist\n");
+	//logger.debug("TRANS::trans2Fist\n");
 
 	closeMitten();
 	closeForefinger();
@@ -100,36 +99,36 @@ void Transition::transitionToFist(){
 
   void Transition::openMitten(){
 
-    logger.debug("TRANS::openMitten\n");
+    //logger.debug("TRANS::openMitten\n");
     inputOutputUtils.openMitten();
   }
 
   void Transition::closeMitten(){
 
-    logger.debug("TRANS::closeMitten\n");
+    //logger.debug("TRANS::closeMitten\n");
     inputOutputUtils.closeMitten();
   }
 
   void Transition::openForefinger(){
 
-    logger.debug("TRANS::openForefinger\n");
+    //logger.debug("TRANS::openForefinger\n");
     inputOutputUtils.openForefinger();
   }
 
   void Transition::closeForefinger(){
 
-    logger.debug("TRANS::closeForefinger\n");
+    //logger.debug("TRANS::closeForefinger\n");
     inputOutputUtils.closeForefinger();
   }
 
   void Transition::openThumb(){
 
-    logger.debug("TRANS::openThumb\n");
+    //logger.debug("TRANS::openThumb\n");
     inputOutputUtils.openThumb();
   }
 
   void Transition::closeThumb(){
 
-    logger.debug("TRANS::closeThumb\n");
+    //logger.debug("TRANS::closeThumb\n");
     inputOutputUtils.closeThumb();
   }
