@@ -134,6 +134,7 @@ int InputOutputUtils::getTransitionToPerform(State state) {
 	// ROSA
 	static int i = 0;
 	transitionTo = ((i++)%STATES_NUMBER);
+	delay(10000);
 
 	delay(5000);
 

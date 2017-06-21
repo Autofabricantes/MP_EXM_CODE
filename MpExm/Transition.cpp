@@ -12,7 +12,6 @@ Transition::Transition(){
 void Transition::reset(){
 
 	//logger.debug("TRANS::reset\n");
-	transitionToInactive();
 }
 
 int Transition::getTransitionToPerform(State state){

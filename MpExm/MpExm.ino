@@ -23,9 +23,6 @@ void setup(){
 	inputOutputUtils.initializeInputElements();
 	inputOutputUtils.initializeOutputElements();
 	
-	delay(10000);
-	
-  
 }
   
 void loop(){
