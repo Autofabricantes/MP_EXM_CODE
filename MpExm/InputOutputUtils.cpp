@@ -136,8 +136,6 @@ int InputOutputUtils::getTransitionToPerform(State state) {
 	transitionTo = ((i++)%STATES_NUMBER);
 	delay(10000);
 
-	delay(5000);
-
 	// Menu
 	transitionTo = test.testInputForTransition();
 
